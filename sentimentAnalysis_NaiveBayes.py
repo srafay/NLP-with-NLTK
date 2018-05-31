@@ -12,6 +12,12 @@ neg_tweets = [('I do not like this car', 'negative'),
               ('I am not looking forward to the concert', 'negative'),
               ('He is my enemy', 'negative')]
 
+test_tweets = [('I feel happy this morning', 'positive'),
+              ('Larry is my friend', 'positive'),
+              ('I do not like that man', 'negative'),
+              ('My house is not great', 'negative'),
+              ('Your song is annoying', 'negative')]
+
 tweets = []
 
 # Remove words smaller than 2 characters like "we", "i", "to", "is"
@@ -50,3 +56,13 @@ classifier = nltk.NaiveBayesClassifier.train(training_set)
 # Test the classifier
 tweet = 'Larry is my friend'
 print classifier.classify(extract_features(tweet.split()))
+
+def getAccuracy(classifier, test_set):
+    total = len(test_set)
+    correct = 0
+    for i in range (total):
+	if (test_set[i][1] == classifier.classify(extract_features(test_set[i][0].split())) ):
+	    correct += 1
+    return (correct*100/total)
+
+print 'Accuracy is: ', getAccuracy(classifier, test_tweets)
