@@ -1,31 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from sklearn.model_selection import train_test_split # function for splitting data to train and test sets
-
-import nltk
-from nltk.corpus import stopwords
-from nltk.classify import SklearnClassifier
 
 from wordcloud import WordCloud,STOPWORDS
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('Sentiment.csv')
+data = pd.read_csv('input/Sentiment.csv')
 
 # Keeping only the neccessary columns
 data = data[['text','sentiment']]
-
-# Splitting the dataset into train and test set
-train, test = train_test_split(data,test_size = 0.1)
-
-# Split positive and negative words for making a wordcloud
-train_pos = train[ train['sentiment'] == 'Positive']
-train_pos = train_pos['text']
-train_neg = train[ train['sentiment'] == 'Negative']
-train_neg = train_neg['text']
-train_neu = train[ train['sentiment'] == 'Neutral']
-train_neu = train_neu['text']
 
 def wordcloud_draw(data, color = 'white', filename='wordCloud.png'):
     words = ' '.join(data)
@@ -54,8 +37,12 @@ def analyzeAndAnnotate(data):
     neutralWords = data[data['sentiment'] == 'Neutral']
     neutralWords = neutralWords['text']
     print("Positive words")
-    wordcloud_draw(positiveWords,'white', 'positiveWords_Cloud.png')
+    wordcloud_draw(positiveWords,'white', 'visualizations/positiveWords_Cloud.png')
     print("Negative words")
-    wordcloud_draw(negativeWords, 'white', 'negativeWords_Cloud.png')
+    wordcloud_draw(negativeWords, 'white', 'visualizations/negativeWords_Cloud.png')
     print("Neutral words")
-    wordcloud_draw(neutralWords, 'white', 'neutralWords_Cloud.png')
+    wordcloud_draw(neutralWords, 'white', 'visualizations/neutralWords_Cloud.png')
+    
+# Call the function to make visualization figures
+
+analyzeAndAnnotate(data)
