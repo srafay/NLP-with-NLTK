@@ -8,10 +8,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.classify import SklearnClassifier
 
-from wordcloud import WordCloud,STOPWORDS
-import matplotlib.pyplot as plt
-
-data = pd.read_csv('Sentiment.csv')
+data = pd.read_csv('input/Sentiment.csv')
 
 # Keeping only the neccessary columns
 data = data[['text','sentiment']]
@@ -27,35 +24,68 @@ train_neg = train_neg['text']
 train_neu = train[ train['sentiment'] == 'Neutral']
 train_neu = train_neu['text']
 
-def wordcloud_draw(data, color = 'white', filename='wordCloud.png'):
-    words = ' '.join(data)
-    cleaned_word = " ".join([word for word in words.split()
-                            if 'http' not in word
-                                and not word.startswith('@')
-                                and not word.startswith('#')
-                                and word != 'RT'
-                            ])
-    wordcloud = WordCloud(stopwords=STOPWORDS,
-                      background_color=color,
-                      width=2500,
-                      height=2000
-                     ).generate(cleaned_word)
-    plt.figure(1,figsize=(13, 13))
-    plt.imshow(wordcloud)
-    plt.axis('off')
-    plt.savefig(filename)
-    plt.show()
+tweets = []
+nltk.download("stopwords")
+stopwords_set = set(stopwords.words("english"))
 
-def analyzeAndAnnotate(data):
-    positiveWords = data[data['sentiment'] == 'Positive']
-    positiveWords = positiveWords['text']
-    negativeWords = data[data['sentiment'] == 'Negative']
-    negativeWords = negativeWords['text']
-    neutralWords = data[data['sentiment'] == 'Neutral']
-    neutralWords = neutralWords['text']
-    print("Positive words")
-    wordcloud_draw(positiveWords,'white', 'positiveWords_Cloud.png')
-    print("Negative words")
-    wordcloud_draw(negativeWords, 'white', 'negativeWords_Cloud.png')
-    print("Neutral words")
-    wordcloud_draw(neutralWords, 'white', 'neutralWords_Cloud.png')
+for index, row in train.iterrows():
+    words_filtered = [e.lower() for e in row.text.split() if len(e) >= 3]
+    words_cleaned = [word for word in words_filtered
+        if 'http' not in word
+        and not word.startswith('@')
+        and not word.startswith('#')
+        and word != 'RT']
+    words_without_stopwords = [word for word in words_cleaned if not word in stopwords_set]
+    tweets.append((words_cleaned,row.sentiment))
+
+test_pos = test[ test['sentiment'] == 'Positive']
+test_pos = test_pos['text']
+test_neg = test[ test['sentiment'] == 'Negative']
+test_neg = test_neg['text']
+test_neu = test[ test['sentiment'] == 'Neutral']
+test_neu = test_neu['text']
+
+# Extracting word features
+def get_words_in_tweets(tweets):
+    all = []
+    for (words, sentiment) in tweets:
+        all.extend(words)
+    return all
+
+def get_word_features(wordlist):
+    wordlist = nltk.FreqDist(wordlist)
+    features = wordlist.keys()
+    return features
+w_features = get_word_features(get_words_in_tweets(tweets))
+
+def extract_features(document):
+    document_words = set(document)
+    features = {}
+    for word in w_features:
+        features['containts(%s)' % word] = (word in document_words)
+    return features
+
+# Training the Naive Bayes classifier
+training_set = nltk.classify.apply_features(extract_features,tweets)
+classifier = nltk.NaiveBayesClassifier.train(training_set)
+
+neg_cnt = 0
+pos_cnt = 0
+neu_cnt = 0
+for obj in test_neg: 
+    res =  classifier.classify(extract_features(obj.split()))
+    if(res == 'Negative'): 
+        neg_cnt = neg_cnt + 1
+for obj in test_pos: 
+    res =  classifier.classify(extract_features(obj.split()))
+    if(res == 'Positive'): 
+        pos_cnt = pos_cnt + 1
+        
+for obj in test_neu: 
+    res =  classifier.classify(extract_features(obj.split()))
+    if(res == 'Neutral'): 
+        neu_cnt = neu_cnt + 1
+        
+print('[Negative]: %s/%s '  % (len(test_neg),neg_cnt))        
+print('[Positive]: %s/%s '  % (len(test_pos),pos_cnt))
+print('[Neutral]: %s/%s '  % (len(test_neu),neu_cnt))
