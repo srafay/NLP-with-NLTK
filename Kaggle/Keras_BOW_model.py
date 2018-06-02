@@ -24,16 +24,31 @@ data = data[['text','sentiment']]
 
 data['text'] = data['text'].apply(lambda x: x.lower())
 data['text'] = data['text'].apply((lambda x: re.sub('[^a-zA-z0-9\s]','',x)))
+tweets = pd.DataFrame(columns=['text','sentiment'])
+from nltk.corpus import stopwords
+stopwords_set = set(stopwords.words("english"))
 
-train_size = int(len(data) * .8)
+for index, row in data.iterrows():
+    words_filtered = [e.lower() for e in row.text.split() if len(e) >= 3]
+    words_cleaned = [word for word in words_filtered
+        if 'http' not in word
+        and not word.startswith('@')
+        and not word.startswith('#')
+        and word != 'RT']
+    words_without_stopwords = [word for word in words_cleaned if not word in stopwords_set]
+    #tweets.append((words_without_stopwords,row.sentiment))
+    tweets = tweets.append({'text':' '.join(words_without_stopwords), 'sentiment':''.join(row.sentiment)}, ignore_index=True)
 
-train_posts = data['text'][:train_size]
-train_tags = data['sentiment'][:train_size]
 
-test_posts = data['text'][train_size:]
-test_tags = data['sentiment'][train_size:]
+train_size = int(len(tweets) * .8)
 
-vocab_size = 3100
+train_posts = tweets['text'][:train_size]
+train_tags = tweets['sentiment'][:train_size]
+
+test_posts = tweets['text'][train_size:]
+test_tags = tweets['sentiment'][train_size:]
+
+vocab_size = 500
 tokenize = text.Tokenizer(num_words=vocab_size)
 tokenize.fit_on_texts(train_posts)
 
@@ -51,8 +66,6 @@ batch_size = 64
 model = Sequential()
 model.add(Dense(1024, input_shape=(vocab_size,)))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(512, activation='sigmoid'))
 model.add(Dropout(0.5))
 model.add(Dense(num_labels))
 model.add(Activation('softmax'))
