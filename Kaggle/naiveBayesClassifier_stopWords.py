@@ -36,7 +36,7 @@ for index, row in train.iterrows():
         and not word.startswith('#')
         and word != 'RT']
     words_without_stopwords = [word for word in words_cleaned if not word in stopwords_set]
-    tweets.append((words_cleaned,row.sentiment))
+    tweets.append((words_without_stopwords,row.sentiment))
 
 test_pos = test[ test['sentiment'] == 'Positive']
 test_pos = test_pos['text']
