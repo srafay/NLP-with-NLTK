@@ -27,3 +27,46 @@
 * "Your song is annoying"
   * The classifier thinks it is positive. The reason is that we don’t have any information on the feature name ‘annoying’
   * Larger the training sample tweets is, the better the classifier will be
+  
+## Kaggle Competition
+* In this competition, you have to analyze tweets on the **first 2016 GOP Presidential Debate**
+* Details and data for this competition are available here: [First GOP Debate Twitter Sentiment](https://www.kaggle.com/crowdflower/first-gop-debate-twitter-sentiment/home)
+* 90% of the data is used for training
+  * While remaining 10% is used for testing
+* The tweets are then separated into positive, negative and neutral sets
+* Tweets contain many unimportant words and things (like mentions, urls etc), so we need to clean them first
+  * Split the tweet into words
+  * If the word contains **http**, then remove it as it is a link
+  * If a word starts with **@**, then remove it as it is a mention
+  * If a word starts with **#**, then remove it as it is for hashtag
+  * If a word starts with **RT**, then remove it as it represents Retweet
+* We can also remove **stopwords** from the tweets
+  * These are commonly used words such as the, an, is, this etc
+  * They donot contain any significant information
+  * Thus they can be safely ignored
+  * available in wordcloud.stopwords (python)
+* For visualizing the important words in these tweets, we can use **Word Cloud** library
+  * Mostly used words in a positive tweet
+  * <p align="center"><img src="https://raw.githubusercontent.com/srafay/Twitter-Sentiment-Analysis/master/Kaggle/visualizations/positiveWords_Cloud.png"></p>
+  * Similarly, we can make Word Clouds for negative and neutral tweets (in Visualizations folder)
+  * Feature words are extracted using **bag-of-words** model
+    * The bag-of-words model is commonly used in methods of document classification where the (frequency of) occurrence of each word is used as a feature for training a classifier
+  * Then we use Naive Bayes Classifier for training the model
+    * nltk.NaiveBayesClassifier
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
