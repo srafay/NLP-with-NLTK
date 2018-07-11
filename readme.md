@@ -53,8 +53,29 @@
     * The bag-of-words model is commonly used in methods of document classification where the (frequency of) occurrence of each word is used as a feature for training a classifier
   * Then we use Naive Bayes Classifier for training the model
     * nltk.NaiveBayesClassifier
-  
-  
+  * Using the same pre-processing and feature techniques, we can use Deep Neural Nets for better performance
+  * We can use **Keras BOW** (bag of words) model for this purpose
+    * Make a **Sequential** Model (linear stack of layers)
+    * Add a **Dense** layer (It is a fully connected layer to perform classification on the features extracted)
+      * called fully connected because every node in this layer is connected to every other node in the preceding layer
+    * Add activation function as **ReLu** (Rectified Linear Unit)
+      * ReLu is the *most popular* activation function as of 2018
+      * It is faster 
+      * Other benefits is Sparsity
+        * most results are zero
+        * or positive values
+    * Add a **Dropout** layer
+      * for regularization
+      * reduces over-fitting
+      * it drops out the learning of units in the net
+    * Add final **Dense** layer (3 units in this case as positive, negative, neutral)
+      * activation of this layer would be **Softmax**
+        * Softmax activation is often used in the final layer of NN based classifiers
+    * Choose appropriate batch size and epoch values
+    * Also make sure to use validation_split while fitting the model
+      * it gives the idea about performance of your model on unseen data
+      * also good for preventing overfitting
+    * After training the model, make predictions and get the accuracy on unseen data
   
   
   
