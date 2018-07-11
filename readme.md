@@ -76,7 +76,27 @@
       * it gives the idea about performance of your model on unseen data
       * also good for preventing overfitting
     * After training the model, make predictions and get the accuracy on unseen data
-  
+    * The confusion matrix is as follows:
+    * <p align="center"><img src="https://raw.githubusercontent.com/srafay/Twitter-Sentiment-Analysis/master/Kaggle/visualizations/confusion_matrix_keras_model.png"></p>
+    
+  #### Conclusions
+  * The model works well in detecting negative tweets (86% accurate on unseen data)
+  * From the confusion matrix, we can see that the model works poorly for neutral and positive tweets
+  * This is because the training data is unbalanced
+    * negative tweets: 16986
+    * positive tweets: 4472
+  * We should get more data for positive and neutral tweets
+    * or maybe we could get other dataset and combine them both
+    * or maybe use some pre-trained model
+  * One more problem is sarcastic tweets / comments
+    * tweets which are ironic
+    * or have difficult context
+  * Example
+    * "*Muhaha, how sad that the Liberals couldn't destroy Trump. Marching forward*"
+    * the words sad and destroy highly influences the evaluation
+    * although this tweet should be positive when observing its meaning and context
+  * Maybe we should look into LSTM network in the future :))
+    * as it takes trends, context and references into account
   
   
   
