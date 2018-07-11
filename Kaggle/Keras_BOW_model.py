@@ -61,7 +61,7 @@ y_train = encoder.transform(train_tags)
 y_test = encoder.transform(test_tags)
 
 num_labels = 3
-batch_size = 64
+batch_size = 32
 
 model = Sequential()
 model.add(Dense(1024, input_shape=(vocab_size,)))
@@ -75,7 +75,7 @@ model.compile(loss='categorical_crossentropy',
 
 history = model.fit(x_train, y_train, 
                     batch_size=batch_size, 
-                    epochs=32, 
+                    epochs=64, 
                     verbose=1, 
                     validation_split=0.1)
 
