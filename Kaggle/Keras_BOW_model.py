@@ -61,12 +61,19 @@ y_train = encoder.transform(train_tags)
 y_test = encoder.transform(test_tags)
 
 num_labels = 3
-batch_size = 32
+batch_size = 128
+
+from sklearn.utils import class_weight
+y_ints = [y.argmax() for y in y_train]
+class_weights = class_weight.compute_class_weight('balanced',
+                                                 np.unique(y_ints),
+                                                 y_ints)
+
 
 model = Sequential()
-model.add(Dense(1024, input_shape=(vocab_size,)))
+model.add(Dense(32, input_shape=(vocab_size,)))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(0.8))
 model.add(Dense(num_labels))
 model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', 
@@ -75,9 +82,10 @@ model.compile(loss='categorical_crossentropy',
 
 history = model.fit(x_train, y_train, 
                     batch_size=batch_size, 
-                    epochs=64, 
+                    epochs=512, 
                     verbose=1, 
-                    validation_split=0.1)
+                    validation_split=0.1,
+                    class_weight=class_weights)
 
 score = model.evaluate(x_test, y_test, 
                        batch_size=batch_size, verbose=1)
@@ -149,6 +157,6 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label', fontsize=25)
     
 cnf_matrix = confusion_matrix(y_test_1d, y_pred_1d)
-plt.figure(figsize=(24,20))
+plt.figure(figsize=(14,10))
 plot_confusion_matrix(cnf_matrix, classes=text_labels, title="Confusion matrix")
 plt.show()
