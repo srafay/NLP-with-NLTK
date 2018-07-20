@@ -87,6 +87,29 @@ history = model.fit(x_train, y_train,
                     validation_split=0.1,
                     class_weight=class_weights)
 
+def plotLossnAcc(history):
+    print(history.history.keys())
+    #  "Accuracy"
+    plt.figure(figsize=(7,5))
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+    # "Loss"
+    plt.figure(figsize=(7,5))
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'validation'], loc='upper left')
+    plt.show()
+    
+plotLossnAcc(history)
+
 score = model.evaluate(x_test, y_test, 
                        batch_size=batch_size, verbose=1)
 
